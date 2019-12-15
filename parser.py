@@ -1,0 +1,101 @@
+# Copyright 2017 TU Dresden
+# All rights reserved.
+#
+# Authors: Christian Menard
+#          Norman Rink
+
+
+class Parser:
+    """Parser for arithmetic expressions
+
+    Args:
+       tokens (List[str]): List of all tokens
+
+    Attributes:
+       current_token (str): The token currently being processed
+       remaining_tokens (List[str]): List of unprocessed tokens
+    """
+
+    def __init__(self, tokens):
+        self.current_token = None
+        self.remaining_tokens = tokens
+
+    def consume_token(self):
+        """Consume a token and return it
+
+        Remove the next token from ``remaining_tokens`` and update
+        ``current_token``.
+
+        Returns:
+            str: The current token
+        """
+        if len(self.remaining_tokens) > 0:
+            self.current_token = self.remaining_tokens.pop(0)
+        else:
+            self.current_token = None
+        return self.current_token
+
+    def accept_token(self, expected):
+        """Consume a token and verify
+
+        Verify that the current token is the ``expected`` token, remove the
+        next token from ``remaining_tokens`` and update ``current_token``.
+
+        Args:
+            expected (str): Expected token
+
+        Returns:
+            str: The current token
+
+        Raises:
+            RuntimeError: if the ``current_token`` is not the ``expected`` token
+        """
+        t = self.current_token
+        if t is None:
+            raise RuntimeError('Expected token %s but found end of stream' %
+                               expected)
+        if t.type != expected:
+            raise RuntimeError('Expected token %s but found %s' % (expected,
+                                                                   t.type))
+        return self.consume_token()
+
+    def parseS(self):
+        """Parse non-terminal S"""
+        self.consume_token()  # read the first token
+        t = self.current_token
+
+        if t is None:
+            raise RuntimeError('Error while parsing S (end of stream)')
+
+        if (t.type == 'LPARAN'
+                or t.type == 'INT_LIT'
+                or t.type == 'FLOAT_LIT'
+                or t.type == 'IDENTIFIER'):
+            self.parseE()
+            # we should have processed all tokens by now
+            if self.current_token is not None:
+                raise RuntimeError('Error while parsing S (did not reach end '
+                                   'of stream, current token: %s' %
+                                   self.current_token)
+        else:
+            raise RuntimeError('Error while parsing S (current token %s)' % t)
+
+    def parseE(self):
+        """Parse non-terminal E"""
+        raise NotImplementedError('parseE() is not yet implemented!')
+
+    def parseT(self):
+        """Parse non-terminal T"""
+        raise NotImplementedError('parseT() is not yet implemented!')
+
+    def parseF(self):
+        """Parse non-terminal F"""
+        raise NotImplementedError('parseF() is not yet implemented!')
+
+    def parseTp(self):
+        """Parse non-terminal Tp"""
+        raise NotImplementedError('parseTp() is not yet implemented!')
+
+    def parseEp(self):
+        """Parse non-terminal Ep"""
+        raise NotImplementedError('parseEp() is not yet implemented!')
