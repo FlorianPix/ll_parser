@@ -77,25 +77,90 @@ class Parser:
                 raise RuntimeError('Error while parsing S (did not reach end '
                                    'of stream, current token: %s' %
                                    self.current_token)
+            print('Parsing was successful')
         else:
             raise RuntimeError('Error while parsing S (current token %s)' % t)
 
     def parseE(self):
         """Parse non-terminal E"""
-        raise NotImplementedError('parseE() is not yet implemented!')
+        t = self.current_token
+        if (t.type == 'LPARAN'
+                or t.type == 'INT_LIT'
+                or t.type == 'FLOAT_LIT'
+                or t.type == 'IDENTIFIER'):
+            self.parseT()
+            self.parseEp()
+            return
+        raise RuntimeError('Error while parsing E (current token %s)' % t)
 
     def parseT(self):
         """Parse non-terminal T"""
-        raise NotImplementedError('parseT() is not yet implemented!')
+        t = self.current_token
+
+        if t is None:
+            raise RuntimeError('Error while parsing T (end of stream)')
+
+        if (t.type == 'INT_LIT'
+                or t.type == 'FLOAT_LIT'
+                or t.type == 'IDENTIFIER'
+                or t.type == 'LPARAN'):
+            self.parseF()
+            self.parseTp()
+            return
+        raise RuntimeError('Error while parsing T (current token %s)' % t)
 
     def parseF(self):
         """Parse non-terminal F"""
-        raise NotImplementedError('parseF() is not yet implemented!')
+        t = self.current_token
+
+        if t is None:
+            raise RuntimeError('Error while parsing F (end of stream)')
+
+        if t.type == 'INT_LIT':
+            self.accept_token('INT_LIT')
+            return t.value
+        elif t.type == 'FLOAT_LIT':
+            self.accept_token('FLOAT_LIT')
+            return t.value
+        elif t.type == 'IDENTIFIER':
+            self.accept_token('IDENTIFIER')
+            return
+        elif t.type == 'LPARAN':
+            self.accept_token('LPARAN')
+            self.parseE()
+            self.accept_token('RPARAN')
+            return
+        raise RuntimeError('Error while parsing F (current token %s)' % t)
 
     def parseTp(self):
         """Parse non-terminal Tp"""
-        raise NotImplementedError('parseTp() is not yet implemented!')
+        t = self.current_token
+
+        if t is None:
+            return
+        elif t.type == 'PLUS':
+            return
+        elif t.type == 'RPARAN':
+            return
+        elif t.type == 'STAR':
+            self.accept_token('STAR')
+            self.parseF()
+            self.parseTp()
+            return
+        raise RuntimeError('Error while parsing Tp (current token %s)' % t)
 
     def parseEp(self):
         """Parse non-terminal Ep"""
-        raise NotImplementedError('parseEp() is not yet implemented!')
+        t = self.current_token
+
+        if t is None:
+            return
+        elif t.type == 'RPARAN':
+            return
+        elif t.type == 'PLUS':
+            self.accept_token('PLUS')
+            self.parseT()
+            self.parseEp()
+            return
+
+        raise RuntimeError('Error while parsing Ep (current token %s)' % t)
