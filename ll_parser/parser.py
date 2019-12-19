@@ -74,12 +74,13 @@ class Parser:
                 or t.type == 'INT_LIT'
                 or t.type == 'FLOAT_LIT'
                 or t.type == 'IDENTIFIER'):
-            self.parseE()
+            e = self.parseE()
             # we should have processed all tokens by now
             if self.current_token is not None:
                 raise RuntimeError('Error while parsing S (did not reach end '
                                    'of stream, current token: %s' %
                                    self.current_token)
+            return e
         else:
             raise RuntimeError('Error while parsing S (current token %s)' % t)
 
@@ -94,8 +95,11 @@ class Parser:
                 or t.type == 'INT_LIT'
                 or t.type == 'FLOAT_LIT'
                 or t.type == 'IDENTIFIER'):
-            self.parseT()
-            self.parseEp()
+            t = self.parseT()
+            ep = self.parseEp()
+            if ep is not None:
+                return ast.BinOp('ADD', t, ep)
+            return t
         else:
             raise RuntimeError('Error while parsing E (current token %s)' % t)
 
@@ -110,8 +114,11 @@ class Parser:
                 or t.type == 'INT_LIT'
                 or t.type == 'FLOAT_LIT'
                 or t.type == 'IDENTIFIER'):
-            self.parseF()
-            self.parseTp()
+            f = self.parseF()
+            tp = self.parseTp()
+            if tp is not None:
+                return ast.BinOp('MUL', f, tp)
+            return f
         else:
             raise RuntimeError('Error while parsing T (current token %s)' % t)
 
@@ -124,14 +131,18 @@ class Parser:
 
         if t.type == 'LPARAN':
             self.consume_token()
-            self.parseE()
+            e = self.parseE()
             self.accept_token('RPARAN')
+            return e
         elif t.type == 'INT_LIT':
             self.consume_token()
+            return ast.IntLit(t.value)
         elif t.type == 'FLOAT_LIT':
             self.consume_token()
+            return ast.FloatLit(t.value)
         elif t.type == 'IDENTIFIER':
             self.consume_token()
+            return ast.Identifier(t.name)
         else:
             raise RuntimeError('Error while parsing F (current token %s)' % t)
 
@@ -143,8 +154,11 @@ class Parser:
             return
         elif t.type == 'STAR':
             self.consume_token()
-            self.parseF()
-            self.parseTp()
+            f = self.parseF()
+            tp = self.parseTp()
+            if tp is not None:
+                return ast.BinOp('MUL', f, tp)
+            return f
         else:
             raise RuntimeError("Error while parsing Tp' (current token %s)" % t)
 
@@ -156,7 +170,10 @@ class Parser:
             return
         elif t.type == 'PLUS':
             self.consume_token()
-            self.parseT()
-            self.parseEp()
+            t = self.parseT()
+            ep = self.parseEp()
+            if ep is not None:
+                return ast.BinOp('ADD', t, ep)
+            return t
         else:
             raise RuntimeError("Error while parsing Ep' (current token %s)" % t)
