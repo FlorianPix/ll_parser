@@ -137,6 +137,8 @@ class Parser:
         if (t is None
                 or t.type == 'PLUS'
                 or t.type == 'RPARAN'):
+            val = left
+            return val, left
         elif t.type == 'STAR':
             self.consume_token()
             val = self.parseTp(None, left * self.parseF(None, None)[0])[0]
