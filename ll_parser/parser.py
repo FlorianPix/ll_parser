@@ -61,7 +61,6 @@ class Parser:
 
     def parseS(self):
         """Parse non-terminal S"""
-        print("S")
         self.consume_token()  # read the first token
         t = self.current_token
 
@@ -78,14 +77,16 @@ class Parser:
                 raise RuntimeError('Error while parsing S (did not reach end '
                                    'of stream, current token: %s' %
                                    self.current_token)
-            print('Parsing was successful')
         else:
             raise RuntimeError('Error while parsing S (current token %s)' % t)
 
     def parseE(self, val, left):
         """Parse non-terminal E"""
-        print("E", val, left)
         t = self.current_token
+
+        if t is None:
+            raise RuntimeError('Error while parsing E (end of stream)')
+
         if (t.type == 'LPARAN'
                 or t.type == 'INT_LIT'
                 or t.type == 'FLOAT_LIT'
@@ -96,7 +97,6 @@ class Parser:
 
     def parseT(self, val, left):
         """Parse non-terminal T"""
-        print("T", val, left)
         t = self.current_token
 
         if t is None:
@@ -112,23 +112,20 @@ class Parser:
 
     def parseF(self, val, left):
         """Parse non-terminal F"""
-        print("F", val, left)
         t = self.current_token
 
         if t is None:
             raise RuntimeError('Error while parsing F (end of stream)')
 
-        if t.type == 'INT_LIT':
-            self.accept_token('INT_LIT')
-            return t.value, None
-        elif t.type == 'FLOAT_LIT':
-            self.accept_token('FLOAT_LIT')
+        if (t.type == 'INT_LIT'
+                or t.type == 'FLOAT_LIT'):
+            self.consume_token()
             return t.value, None
         elif t.type == 'IDENTIFIER':
-            self.accept_token('IDENTIFIER')
-            return t.value, None
+            self.consume_token()
+            return None, None
         elif t.type == 'LPARAN':
-            self.accept_token('LPARAN')
+            self.consume_token()
             val = self.parseE(None, None)[0]
             self.accept_token('RPARAN')
             return val, None
@@ -136,36 +133,26 @@ class Parser:
 
     def parseTp(self, val, left):
         """Parse non-terminal Tp"""
-        print("Tp", val, left)
         t = self.current_token
-        if t is None:
-            val = left
-            return val, left
-        elif t.type == 'PLUS':
-            val = left
-            return val, left
-        elif t.type == 'RPARAN':
-            val = left
-            return val, left
+        if (t is None
+                or t.type == 'PLUS'
+                or t.type == 'RPARAN'):
         elif t.type == 'STAR':
-            self.accept_token('STAR')
+            self.consume_token()
             val = self.parseTp(None, left * self.parseF(None, None)[0])[0]
             return val, None
         raise RuntimeError('Error while parsing Tp (current token %s)' % t)
 
     def parseEp(self, val, left):
         """Parse non-terminal Ep"""
-        print("Ep", val, left)
         t = self.current_token
 
-        if t is None:
-            val = left
-            return val, left
-        elif t.type == 'RPARAN':
+        if (t is None
+                or t.type == 'RPARAN'):
             val = left
             return val, left
         elif t.type == 'PLUS':
-            self.accept_token('PLUS')
+            self.consume_token()
             val = self.parseEp(None, left + self.parseT(None, None)[0])[0]
             return val, None
 
