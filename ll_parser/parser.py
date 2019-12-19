@@ -117,16 +117,16 @@ class Parser:
             raise RuntimeError('Error while parsing F (end of stream)')
 
         if t.type == 'INT_LIT':
-            self.accept_token('INT_LIT')
+            self.consume_token()
             return t.value
         elif t.type == 'FLOAT_LIT':
-            self.accept_token('FLOAT_LIT')
+            self.consume_token()
             return t.value
         elif t.type == 'IDENTIFIER':
-            self.accept_token('IDENTIFIER')
+            self.consume_token()
             return
         elif t.type == 'LPARAN':
-            self.accept_token('LPARAN')
+            self.consume_token()
             self.parseE()
             self.accept_token('RPARAN')
             return
@@ -138,12 +138,10 @@ class Parser:
 
         if t is None:
             return
-        elif t.type == 'PLUS':
-            return
-        elif t.type == 'RPARAN':
+        elif t.type == 'PLUS' or t.type == 'RPARAN':
             return
         elif t.type == 'STAR':
-            self.accept_token('STAR')
+            self.consume_token()
             self.parseF()
             self.parseTp()
             return
@@ -158,7 +156,7 @@ class Parser:
         elif t.type == 'RPARAN':
             return
         elif t.type == 'PLUS':
-            self.accept_token('PLUS')
+            self.consume_token()
             self.parseT()
             self.parseEp()
             return
