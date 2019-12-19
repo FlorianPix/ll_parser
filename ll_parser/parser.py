@@ -77,7 +77,6 @@ class Parser:
                 raise RuntimeError('Error while parsing S (did not reach end '
                                    'of stream, current token: %s' %
                                    self.current_token)
-            print('Parsing was successful')
         else:
             raise RuntimeError('Error while parsing S (current token %s)' % t)
 
@@ -116,10 +115,8 @@ class Parser:
         if t is None:
             raise RuntimeError('Error while parsing F (end of stream)')
 
-        if t.type == 'INT_LIT':
-            self.consume_token()
-            return t.value
-        elif t.type == 'FLOAT_LIT':
+        if (t.type == 'INT_LIT'
+                or t.type == 'FLOAT_LIT'):
             self.consume_token()
             return t.value
         elif t.type == 'IDENTIFIER':
@@ -136,9 +133,9 @@ class Parser:
         """Parse non-terminal Tp"""
         t = self.current_token
 
-        if t is None:
-            return
-        elif t.type == 'PLUS' or t.type == 'RPARAN':
+        if (t is None
+                or t.type == 'PLUS'
+                or t.type == 'RPARAN'):
             return
         elif t.type == 'STAR':
             self.consume_token()
@@ -151,9 +148,8 @@ class Parser:
         """Parse non-terminal Ep"""
         t = self.current_token
 
-        if t is None:
-            return
-        elif t.type == 'RPARAN':
+        if (t is None
+                or t.type == 'RPARAN'):
             return
         elif t.type == 'PLUS':
             self.consume_token()
