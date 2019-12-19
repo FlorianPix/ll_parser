@@ -5,6 +5,9 @@
 #          Norman Rink
 
 
+from . import ast
+
+
 class Parser:
     """Parser for arithmetic expressions
 
@@ -71,7 +74,7 @@ class Parser:
                 or t.type == 'INT_LIT'
                 or t.type == 'FLOAT_LIT'
                 or t.type == 'IDENTIFIER'):
-            print(self.parseE()[1])
+            self.parseE()
             # we should have processed all tokens by now
             if self.current_token is not None:
                 raise RuntimeError('Error while parsing S (did not reach end '
@@ -91,12 +94,10 @@ class Parser:
                 or t.type == 'INT_LIT'
                 or t.type == 'FLOAT_LIT'
                 or t.type == 'IDENTIFIER'):
-            val = self.parseT()[1]
-            fun = self.parseEp()[0]
-            if fun is None:
-                return None, val
-            return None, fun(val)
-        raise RuntimeError('Error while parsing E (current token %s)' % t)
+            self.parseT()
+            self.parseEp()
+        else:
+            raise RuntimeError('Error while parsing E (current token %s)' % t)
 
     def parseT(self):
         """Parse non-terminal T"""
@@ -105,16 +106,14 @@ class Parser:
         if t is None:
             raise RuntimeError('Error while parsing T (end of stream)')
 
-        if (t.type == 'INT_LIT'
+        if(t.type == 'LPARAN'
+                or t.type == 'INT_LIT'
                 or t.type == 'FLOAT_LIT'
-                or t.type == 'IDENTIFIER'
-                or t.type == 'LPARAN'):
-            val = self.parseF()[1]
-            fun = self.parseTp()[0]
-            if fun is None:
-                return None, val
-            return None, fun(val)
-        raise RuntimeError('Error while parsing T (current token %s)' % t)
+                or t.type == 'IDENTIFIER'):
+            self.parseF()
+            self.parseTp()
+        else:
+            raise RuntimeError('Error while parsing T (current token %s)' % t)
 
     def parseF(self):
         """Parse non-terminal F"""
@@ -123,58 +122,41 @@ class Parser:
         if t is None:
             raise RuntimeError('Error while parsing F (end of stream)')
 
-        if (t.type == 'INT_LIT'
-                or t.type == 'FLOAT_LIT'):
+        if t.type == 'LPARAN':
             self.consume_token()
-            return None, t.value
+            self.parseE()
+            self.accept_token('RPARAN')
+        elif t.type == 'INT_LIT':
+            self.consume_token()
+        elif t.type == 'FLOAT_LIT':
+            self.consume_token()
         elif t.type == 'IDENTIFIER':
             self.consume_token()
-            return None, None
-        elif t.type == 'LPARAN':
-            self.consume_token()
-            val = self.parseE()[1]
-            self.accept_token('RPARAN')
-            return None, val
-        raise RuntimeError('Error while parsing F (current token %s)' % t)
+        else:
+            raise RuntimeError('Error while parsing F (current token %s)' % t)
 
     def parseTp(self):
         """Parse non-terminal Tp"""
         t = self.current_token
 
-        if (t is None
-                or t.type == 'PLUS'
-                or t.type == 'RPARAN'):
-            return None, None
+        if t is None or t.type == 'PLUS' or t.type == 'RPARAN':
+            return
         elif t.type == 'STAR':
             self.consume_token()
-            val = self.parseF()[1]
-            fun = self.parseTp()[0]
-            if fun is None:
-                def bun(ar):
-                    return ar * val
-            else:
-                def bun(ar):
-                    return fun(ar * val)
-            return bun, None
-        raise RuntimeError('Error while parsing Tp (current token %s)' % t)
+            self.parseF()
+            self.parseTp()
+        else:
+            raise RuntimeError("Error while parsing Tp' (current token %s)" % t)
 
     def parseEp(self):
         """Parse non-terminal Ep"""
         t = self.current_token
 
-        if (t is None
-            or t.type == 'RPARAN'):
-            return None, None
+        if t is None or t.type == 'RPARAN':
+            return
         elif t.type == 'PLUS':
-            self.accept_token('PLUS')
-            val = self.parseT()[1]
-            fun = self.parseEp()[0]
-            if fun is None:
-                def bun(ar):
-                    return ar + val
-            else:
-                def bun(ar):
-                    return fun(ar + val)
-            return bun, None
-
-        raise RuntimeError('Error while parsing Ep (current token %s)' % t)
+            self.consume_token()
+            self.parseT()
+            self.parseEp()
+        else:
+            raise RuntimeError("Error while parsing Ep' (current token %s)" % t)
