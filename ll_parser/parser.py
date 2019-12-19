@@ -83,6 +83,10 @@ class Parser:
     def parseE(self):
         """Parse non-terminal E"""
         t = self.current_token
+
+        if t is None:
+            raise RuntimeError('Error while parsing E (end of stream)')
+
         if (t.type == 'LPARAN'
                 or t.type == 'INT_LIT'
                 or t.type == 'FLOAT_LIT'
