@@ -158,7 +158,7 @@ class Parser:
             return bun, None
         raise RuntimeError('Error while parsing Tp (current token %s)' % t)
 
-    def parseEp(self, val, left):
+    def parseEp(self):
         """Parse non-terminal Ep"""
         t = self.current_token
 
