@@ -1,15 +1,14 @@
-plus = 'child[sibling distance=2em, level distance=2em]{{node{{+}}}}'
-star = 'child[sibling distance=2em, level distance=2em]{{node{{*}}}}'
-epsilon = 'child[sibling distance=2em, level distance=2em]{{node{{$\\varepsilon$}}}}'
-intlit = 'child[sibling distance=5em]{{node{{INTLIT}}}}'
-floatlit = 'child[sibling distance=5em]{{node{{FLOATLIT}}}}'
-identifier = 'child[sibling distance=5em]{{node{{ID}}}}'
-s = '\\node{S}'
-e = 'child[sibling distance=10em]{{node{{E}}{}}}'  # .format(child)
-t = 'child[sibling distance=10em]{{node{{T}}{}}}'  # .format(child)
-f = 'child[sibling distance=10em]{{node{{F}}{}}}'  # .format(child)
-ep = 'child[sibling distance=5em]{{node{{Ep}}{}}}'  # .format(child)
-tp = 'child[sibling distance=5em]{{node{{Tp}}{}}}'  # .format(child)
+import subprocess
+import ll_parser.ast as AbstractST
+import os
+
+intlit = 'child[sibling distance=3em]{{node{{{}}}}}\n'  # .format(value)
+floatlit = 'child[sibling distance=3em]{{node{{{}}}}}\n'  # .format(value)
+identifier = 'child[sibling distance=3em]{{node{{ID}}}}\n'
+
+exp = '\\node{Exp}\n'
+add = 'child[sibling distance=6em]{\n'  # .format(child)
+mul = 'child[sibling distance=6em]{\n'  # .format(child)
 
 header = '\\documentclass[preview]{standalone} \n\n' \
          '\\usepackage{tikz} \n\n' \
@@ -20,11 +19,42 @@ footer = ';\n' \
          '\\end{tikzpicture}\n' \
          '\\end{document}\n'
 
-result = ''
-
 
 def visual(ast):
-    print(1)
+    latex_file = open('..\\ll_parser\\visual.tex', 'w', encoding='utf8')
+    tex = ''
+    tex += header
+    tex += exp
+    tex += rec(ast)
+    tex += footer
+    latex_file.write(tex)
+    p = subprocess.Popen(["pdflatex", "visual.tex"])
+    os.unlink('visual.log')
+    os.unlink('visual.aux')
 
 
-visual(1)
+def rec(ast):
+    t = type(ast)
+    if t is AbstractST.BinOp:
+        return handle_bin_op(ast)
+    elif t is AbstractST.Identifier:
+        return identifier.format(ast.name)
+    elif t is AbstractST.IntLit:
+        return intlit.format(ast.value)
+    elif t is AbstractST.FloatLit:
+        return floatlit.format(ast.value)
+    return ''
+
+
+def handle_bin_op(ast):
+    if ast.kind is 'ADD':
+        next = add
+        next += 'node{ADD}'
+        next += rec(ast.left) + rec(ast.right)
+        next += '}\n'
+    else:
+        next = mul
+        next += 'node{MUL}'
+        next += rec(ast.left) + rec(ast.right)
+        next += '}\n'
+    return next

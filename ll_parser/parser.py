@@ -142,7 +142,7 @@ class Parser:
             return ast.FloatLit(t.value)
         elif t.type == 'IDENTIFIER':
             self.consume_token()
-            return ast.Identifier(t.name)
+            return ast.Identifier(t.value)
         else:
             raise RuntimeError('Error while parsing F (current token %s)' % t)
 

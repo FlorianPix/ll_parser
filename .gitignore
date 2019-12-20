@@ -201,3 +201,7 @@ $RECYCLE.BIN/
 
 # Video
 *.avi
+
+# Latex aux and log files
+*.log
+*.aux
