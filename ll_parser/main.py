@@ -9,6 +9,7 @@ import sys
 
 from .lexer import lexer
 from .parser import Parser
+from .visual import visual
 
 
 def main():
@@ -22,8 +23,9 @@ def main():
     parser = Parser(tokens)
     ast = parser.parseS()
 
-    # pretty print the AST
+    # really pretty print ast with latex
     print(str(ast))
+    visual(ast)
 
 
 if __name__ == '__main__':
