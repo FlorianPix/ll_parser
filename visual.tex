@@ -7,12 +7,30 @@
 
 \node{Exp}
 child[sibling distance=6em]{
-node{ADD}child[sibling distance=3em]{node{1}}
+node{ADD}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{1}}
 child[sibling distance=6em]{
-node{ADD}child[sibling distance=3em]{node{2}}
+node{ADD}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{2}}
 child[sibling distance=6em]{
-node{ADD}child[sibling distance=3em]{node{3}}
-child[sibling distance=3em]{node{4}}
+node{MUL}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{3}}
+child[sibling distance=6em]{
+node{MUL}child[sibling distance=6em]{
+node{ADD}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{4}}
+child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{3}}
+}
+child[sibling distance=6em]{
+node{MUL}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{2}}
+child[sibling distance=6em]{
+node{MUL}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{2}}
+child[sibling distance=6em]{
+node{ADD}child[sibling distance=6em]{
+node{MUL}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{3}}
+child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{4}}
+}
+child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{2}}
+}
+}
+}
+}
 }
 }
 }

@@ -1,10 +1,9 @@
 import subprocess
 import ll_parser.ast as AbstractST
-import os
 
-intlit = 'child[sibling distance=3em]{{node{{{}}}}}\n'  # .format(value)
-floatlit = 'child[sibling distance=3em]{{node{{{}}}}}\n'  # .format(value)
-identifier = 'child[sibling distance=3em]{{node{{ID}}}}\n'
+intlit = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'  # .format(value)
+floatlit = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'  # .format(value)
+identifier = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{ID}}}}\n'
 
 exp = '\\node{Exp}\n'
 add = 'child[sibling distance=6em]{\n'  # .format(child)
@@ -28,9 +27,7 @@ def visual(ast):
     tex += rec(ast)
     tex += footer
     latex_file.write(tex)
-    p = subprocess.Popen(["pdflatex", "visual.tex"])
-    os.unlink('visual.log')
-    os.unlink('visual.aux')
+    p = subprocess.Popen(["pdflatex", "-interaction", "nonstopmode", "visual.tex"])
 
 
 def rec(ast):
