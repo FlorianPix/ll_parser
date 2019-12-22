@@ -4,6 +4,8 @@ intlit = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\
 floatlit = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
 identifier = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{ID}}}}\n'
 dollar = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{$}}}}\n'
+plus = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{+}}}}\n'
+star = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{*}}}}\n'
 epsilon = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{$\\varepsilon$}}}}\n'
 
 S = '\\node{S}\n'
@@ -23,11 +25,10 @@ footer = ';\n' \
          '\\end{document}\n'
 
 
-def visual(ast):
+def vis(ast):
     latex_file = open('..\\ll_parser\\visual.tex', 'w', encoding='utf8')
     tex = ''
     tex += header
-    tex += S
     tex += rec(ast)
     tex += footer
     latex_file.write(tex)
@@ -35,30 +36,103 @@ def visual(ast):
 
 
 def rec(ast):
-    switcher = {
-        'S': S_vis(ast),
-        'E': E_vis(ast),
-        'T': T_vis(ast),
-        'F': F_vis(ast),
-        'Ep': Ep_vis(ast),
-        'Tp': Tp_vis(ast),
-        'INTLIT': intlit_vis(ast),
-        'FLOATLIT': floatlit_vis(ast),
-        'IDENTIFIER': identifier_vis(ast),
-        'DOLLAR': dollar_vis(ast),
-        'EPSILLON': epsilon_vis(ast)
-    }
-    return switcher.get(ast.kind)
+    ret = switcher.get(ast.kind)(ast)
+    return ret
 
 
 def S_vis(ast):
     result = S
     for child in ast.children:
-        result += rec(child) + rec(child)
+        result += rec(child)
     result += '}\n'
+    return result
+
 
 def E_vis(ast):
     result = E
+    result += 'node{E}'
     for child in ast.children:
-        result += rec(child) + rec(child)
+        result += rec(child)
     result += '}\n'
+    return result
+
+
+def T_vis(ast):
+    result = T
+    result += 'node{T}'
+    for child in ast.children:
+        result += rec(child)
+    result += '}\n'
+    return result
+
+
+def F_vis(ast):
+    result = F
+    result += 'node{F}'
+    for child in ast.children:
+        result += rec(child)
+    result += '}\n'
+    return result
+
+
+def Ep_vis(ast):
+    result = Ep
+    result += 'node{Ep}'
+    for child in ast.children:
+        result += rec(child)
+    result += '}\n'
+    return result
+
+
+def Tp_vis(ast):
+    result = Tp
+    result += 'node{Tp}'
+    for child in ast.children:
+        result += rec(child)
+    result += '}\n'
+    return result
+
+
+def epsilon_vis(ast):
+    return epsilon
+
+
+def dollar_vis(ast):
+    return dollar
+
+
+def plus_vis(ast):
+    return plus
+
+
+def star_vis(ast):
+    return star
+
+
+def floatlit_vis(ast):
+    return floatlit.format(ast.value)
+
+
+def intlit_vis(ast):
+    return intlit.format(ast.value)
+
+
+def identifier_vis(ast):
+    return identifier
+
+
+switcher = {
+    'S': S_vis,
+    'E': E_vis,
+    'T': T_vis,
+    'F': F_vis,
+    'Ep': Ep_vis,
+    'Tp': Tp_vis,
+    'EPSILON': epsilon_vis,
+    'INTLIT': intlit_vis,
+    'FLOATLIT': floatlit_vis,
+    'IDENTIFIER': identifier_vis,
+    '$': dollar_vis,
+    '+': plus_vis,
+    '*': star_vis
+}

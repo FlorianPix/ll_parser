@@ -5,34 +5,38 @@
 \begin{document} 
 \begin{tikzpicture}[level distance=6em, every node/.style={fill=red!30,rounded corners,font=\ttfamily}]
 
-\node{Exp}
+\node{S}
 child[sibling distance=6em]{
-node{ADD}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{1}}
-child[sibling distance=6em]{
-node{ADD}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{2}}
-child[sibling distance=6em]{
-node{MUL}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{3}}
-child[sibling distance=6em]{
-node{MUL}child[sibling distance=6em]{
-node{ADD}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{4}}
-child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{3}}
+node{E}child[sibling distance=6em]{
+node{T}child[sibling distance=6em]{
+node{F}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{1}}
 }
 child[sibling distance=6em]{
-node{MUL}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{2}}
+node{Tp}child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\ttfamily]{{$\varepsilon$}}}}
+}
+}
 child[sibling distance=6em]{
-node{MUL}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{2}}
+node{Ep}child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\ttfamily]{{+}}}}
 child[sibling distance=6em]{
-node{ADD}child[sibling distance=6em]{
-node{MUL}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{3}}
-child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{4}}
+node{T}child[sibling distance=6em]{
+node{F}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{2}}
 }
-child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{2}}
+child[sibling distance=6em]{
+node{Tp}child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\ttfamily]{{*}}}}
+child[sibling distance=6em]{
+node{F}child[sibling distance=3em]{node[fill=green!30,rounded corners,font=\ttfamily]{3}}
+}
+child[sibling distance=6em]{
+node{Tp}child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\ttfamily]{{$\varepsilon$}}}}
 }
 }
 }
+child[sibling distance=6em]{
+node{Ep}child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\ttfamily]{{$\varepsilon$}}}}
 }
 }
 }
+child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\ttfamily]{{$}}}}
 }
 ;
 \end{tikzpicture}

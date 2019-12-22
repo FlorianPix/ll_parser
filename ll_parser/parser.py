@@ -129,16 +129,16 @@ class Parser:
             self.consume_token()
             e = self.parseE()
             self.accept_token('RPARAN')
-            return e
+            return ast.F([ast.RPARAN(), e, ast.LPARAN()])
         elif t.type == 'INT_LIT':
             self.consume_token()
-            return ast.IntLit(t.value)
+            return ast.F([ast.IntLit(t.value)])
         elif t.type == 'FLOAT_LIT':
             self.consume_token()
-            return ast.FloatLit(t.value)
+            return ast.F([ast.FloatLit(t.value)])
         elif t.type == 'IDENTIFIER':
             self.consume_token()
-            return ast.Identifier(t.value)
+            return ast.F([ast.Identifier(t.name)])
         else:
             raise RuntimeError('Error while parsing F (current token %s)' % t)
 
@@ -147,7 +147,7 @@ class Parser:
         t = self.current_token
 
         if t is None or t.type == 'PLUS' or t.type == 'RPARAN':
-            return ast.EPSILON
+            return ast.Tp([ast.EPSILON()])
         elif t.type == 'STAR':
             self.consume_token()
             f = self.parseF()
@@ -161,11 +161,11 @@ class Parser:
         t = self.current_token
 
         if t is None or t.type == 'RPARAN':
-            return ast.EPSILON()
+            return ast.Ep([ast.EPSILON()])
         elif t.type == 'PLUS':
             self.consume_token()
             t = self.parseT()
             ep = self.parseEp()
-            return ast.Ep([ast.PLUS, t, ep])
+            return ast.Ep([ast.PLUS(), t, ep])
         else:
             raise RuntimeError("Error while parsing Ep' (current token %s)" % t)

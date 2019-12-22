@@ -9,7 +9,7 @@ import sys
 
 from .lexer import lexer
 from .parser import Parser
-from .visual import visual
+from .visual import vis
 
 
 def main():
@@ -24,7 +24,7 @@ def main():
     ast = parser.parseS()
 
     # really pretty print ast with latex
-    visual(ast)
+    vis(ast)
 
 
 if __name__ == '__main__':
