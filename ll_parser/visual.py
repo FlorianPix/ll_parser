@@ -4,16 +4,21 @@ intlit = 'child[level distance=2em, sibling distance=3em]{{node[fill=green!30,ro
 floatlit = 'child[level distance=2em, sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
 identifier = 'child[level distance=2em, sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{ID}}}}\n'
 dollar = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,rounded corners,font=\\ttfamily]{\\$}}\n'
+rparan = 'child[sibling distance=1.5em]{node[fill=green!30,rounded corners,font=\\ttfamily]{(}}\n'
+lparan = 'child[sibling distance=1.5em]{node[fill=green!30,rounded corners,font=\\ttfamily]{)}}\n'
 plus = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,rounded corners,font=\\ttfamily]{+}}\n'
 star = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,rounded corners,font=\\ttfamily]{*}}\n'
-epsilon = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,rounded corners,font=\\ttfamily]{$\\varepsilon$}}\n'
+epsilon = 'child[level distance=2em, sibling distance=2em]{node[fill=green!30,rounded corners,font=\\ttfamily]{$\\varepsilon$}}\n'
 
 S = '\\node{S}\n'
-E = 'child[sibling distance=6em]{\n'
-T = 'child[sibling distance=6em]{\n'
-F = 'child[sibling distance=6em]{\n'
-Ep = 'child[sibling distance=6em]{\n'
-Tp = 'child[sibling distance=6em]{\n'
+E = 'child[sibling distance=3em]{\n'
+T = 'child[sibling distance=%sem]{\n'
+F = 'child[sibling distance=%sem]{\n'
+Ep = 'child[sibling distance=%sem]{\n'
+Tp = 'child[sibling distance=%sem]{\n'
+F0 = 'child[level distance=2em, sibling distance=3em]{\n'
+Ep0 = 'child[level distance=2em, sibling distance=3em]{\n'
+Tp0 = 'child[level distance=2em, sibling distance=3em]{\n'
 
 header = '\\documentclass[preview]{standalone} \n\n' \
          '\\usepackage{tikz} \n\n' \
@@ -57,7 +62,7 @@ def E_vis(ast):
 
 
 def T_vis(ast):
-    result = T
+    result = T % get_len(ast.children)
     result += 'node{T}'
     for child in ast.children:
         result += rec(child)
@@ -66,7 +71,12 @@ def T_vis(ast):
 
 
 def F_vis(ast):
-    result = F
+    if (ast.children[0].kind is 'E'
+            or ast.children[0].kind is ')'
+            or ast.children[0].kind is '('):
+        result = F % get_len(ast.children)
+    else:
+        result = F0
     result += 'node{F}'
     for child in ast.children:
         result += rec(child)
@@ -75,7 +85,10 @@ def F_vis(ast):
 
 
 def Ep_vis(ast):
-    result = Ep
+    if ast.children[0].kind is not 'EPSILON':
+        result = Ep % get_len(ast.children)
+    else:
+        result = Ep0
     result += 'node{Ep}'
     for child in ast.children:
         result += rec(child)
@@ -84,7 +97,10 @@ def Ep_vis(ast):
 
 
 def Tp_vis(ast):
-    result = Tp
+    if ast.children[0].kind is not 'EPSILON':
+        result = Tp % get_len(ast.children)
+    else:
+        result = Tp0
     result += 'node{Tp}'
     for child in ast.children:
         result += rec(child)
@@ -94,6 +110,14 @@ def Tp_vis(ast):
 
 def epsilon_vis(ast):
     return epsilon
+
+
+def lparan_vis(ast):
+    return lparan
+
+
+def rparan_vis(ast):
+    return rparan
 
 
 def dollar_vis(ast):
@@ -133,5 +157,15 @@ switcher = {
     'IDENTIFIER': identifier_vis,
     '$': dollar_vis,
     '+': plus_vis,
-    '*': star_vis
+    '*': star_vis,
+    '(': lparan_vis,
+    ')': rparan_vis
 }
+
+
+def get_len(children):
+    ln = len(children) + 1
+    for child in children:
+        if hasattr(child, 'children'):
+            ln += get_len(child.children)
+    return ln
