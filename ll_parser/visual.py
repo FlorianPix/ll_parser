@@ -1,12 +1,12 @@
 import subprocess
 
-intlit = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
-floatlit = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
-identifier = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{ID}}}}\n'
-dollar = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{$}}}}\n'
-plus = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{+}}}}\n'
-star = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{*}}}}\n'
-epsilon = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{$\\varepsilon$}}}}\n'
+intlit = 'child[level distance=2em, sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
+floatlit = 'child[level distance=2em, sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
+identifier = 'child[level distance=2em, sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{ID}}}}\n'
+dollar = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,rounded corners,font=\\ttfamily]{\\$}}\n'
+plus = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,rounded corners,font=\\ttfamily]{+}}\n'
+star = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,rounded corners,font=\\ttfamily]{*}}\n'
+epsilon = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,rounded corners,font=\\ttfamily]{$\\varepsilon$}}\n'
 
 S = '\\node{S}\n'
 E = 'child[sibling distance=6em]{\n'
@@ -44,7 +44,6 @@ def S_vis(ast):
     result = S
     for child in ast.children:
         result += rec(child)
-    result += '}\n'
     return result
 
 
