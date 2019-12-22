@@ -34,20 +34,31 @@ def visual(ast):
     p = subprocess.Popen(["pdflatex", "-interaction", "nonstopmode", "visual.tex"])
 
 
-switcher = {
-    'S': S,
-    'E': E,
-    'T': T,
-    'F': F,
-    'Ep': Ep,
-    'Tp': Tp,
-    'INTLIT': intlit,
-    'FLOATLIT': floatlit,
-    'IDENTIFIER': identifier,
-    'DOLLAR': dollar,
-    'EPSILLON': epsilon
-}
-
-
 def rec(ast):
+    switcher = {
+        'S': S_vis(ast),
+        'E': E_vis(ast),
+        'T': T_vis(ast),
+        'F': F_vis(ast),
+        'Ep': Ep_vis(ast),
+        'Tp': Tp_vis(ast),
+        'INTLIT': intlit_vis(ast),
+        'FLOATLIT': floatlit_vis(ast),
+        'IDENTIFIER': identifier_vis(ast),
+        'DOLLAR': dollar_vis(ast),
+        'EPSILLON': epsilon_vis(ast)
+    }
     return switcher.get(ast.kind)
+
+
+def S_vis(ast):
+    result = S
+    for child in ast.children:
+        result += rec(child) + rec(child)
+    result += '}\n'
+
+def E_vis(ast):
+    result = E
+    for child in ast.children:
+        result += rec(child) + rec(child)
+    result += '}\n'
