@@ -80,7 +80,7 @@ class Parser:
                 raise RuntimeError('Error while parsing S (did not reach end '
                                    'of stream, current token: %s' %
                                    self.current_token)
-            return e
+            return ast.S([e, ast.DOLLAR()])
         else:
             raise RuntimeError('Error while parsing S (current token %s)' % t)
 
@@ -97,9 +97,7 @@ class Parser:
                 or t.type == 'IDENTIFIER'):
             t = self.parseT()
             ep = self.parseEp()
-            if ep is not None:
-                return ast.BinOp('ADD', t, ep)
-            return t
+            return ast.E([t, ep])
         else:
             raise RuntimeError('Error while parsing E (current token %s)' % t)
 
@@ -116,9 +114,7 @@ class Parser:
                 or t.type == 'IDENTIFIER'):
             f = self.parseF()
             tp = self.parseTp()
-            if tp is not None:
-                return ast.BinOp('MUL', f, tp)
-            return f
+            return ast.T([f, tp])
         else:
             raise RuntimeError('Error while parsing T (current token %s)' % t)
 
@@ -151,14 +147,12 @@ class Parser:
         t = self.current_token
 
         if t is None or t.type == 'PLUS' or t.type == 'RPARAN':
-            return
+            return ast.EPSILON
         elif t.type == 'STAR':
             self.consume_token()
             f = self.parseF()
             tp = self.parseTp()
-            if tp is not None:
-                return ast.BinOp('MUL', f, tp)
-            return f
+            return ast.Tp([ast.STAR(), f, tp])
         else:
             raise RuntimeError("Error while parsing Tp' (current token %s)" % t)
 
@@ -167,13 +161,11 @@ class Parser:
         t = self.current_token
 
         if t is None or t.type == 'RPARAN':
-            return
+            return ast.EPSILON()
         elif t.type == 'PLUS':
             self.consume_token()
             t = self.parseT()
             ep = self.parseEp()
-            if ep is not None:
-                return ast.BinOp('ADD', t, ep)
-            return t
+            return ast.Ep([ast.PLUS, t, ep])
         else:
             raise RuntimeError("Error while parsing Ep' (current token %s)" % t)

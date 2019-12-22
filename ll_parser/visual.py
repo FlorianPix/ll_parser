@@ -1,13 +1,17 @@
 import subprocess
-import ll_parser.ast as AbstractST
 
-intlit = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'  # .format(value)
-floatlit = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'  # .format(value)
+intlit = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
+floatlit = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
 identifier = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{ID}}}}\n'
+dollar = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{$}}}}\n'
+epsilon = 'child[sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{$\\varepsilon$}}}}\n'
 
-exp = '\\node{Exp}\n'
-add = 'child[sibling distance=6em]{\n'  # .format(child)
-mul = 'child[sibling distance=6em]{\n'  # .format(child)
+S = '\\node{S}\n'
+E = 'child[sibling distance=6em]{\n'
+T = 'child[sibling distance=6em]{\n'
+F = 'child[sibling distance=6em]{\n'
+Ep = 'child[sibling distance=6em]{\n'
+Tp = 'child[sibling distance=6em]{\n'
 
 header = '\\documentclass[preview]{standalone} \n\n' \
          '\\usepackage{tikz} \n\n' \
@@ -23,35 +27,27 @@ def visual(ast):
     latex_file = open('..\\ll_parser\\visual.tex', 'w', encoding='utf8')
     tex = ''
     tex += header
-    tex += exp
+    tex += S
     tex += rec(ast)
     tex += footer
     latex_file.write(tex)
     p = subprocess.Popen(["pdflatex", "-interaction", "nonstopmode", "visual.tex"])
 
 
+switcher = {
+    'S': S,
+    'E': E,
+    'T': T,
+    'F': F,
+    'Ep': Ep,
+    'Tp': Tp,
+    'INTLIT': intlit,
+    'FLOATLIT': floatlit,
+    'IDENTIFIER': identifier,
+    'DOLLAR': dollar,
+    'EPSILLON': epsilon
+}
+
+
 def rec(ast):
-    t = type(ast)
-    if t is AbstractST.BinOp:
-        return handle_bin_op(ast)
-    elif t is AbstractST.Identifier:
-        return identifier.format(ast.name)
-    elif t is AbstractST.IntLit:
-        return intlit.format(ast.value)
-    elif t is AbstractST.FloatLit:
-        return floatlit.format(ast.value)
-    return ''
-
-
-def handle_bin_op(ast):
-    if ast.kind is 'ADD':
-        next = add
-        next += 'node{ADD}'
-        next += rec(ast.left) + rec(ast.right)
-        next += '}\n'
-    else:
-        next = mul
-        next += 'node{MUL}'
-        next += rec(ast.left) + rec(ast.right)
-        next += '}\n'
-    return next
+    return switcher.get(ast.kind)

@@ -33,78 +33,219 @@ class IntLit:
     """Integer literal AST node
 
     Args:
-       value (int): Value of the integer literal
-
-    Attributes:
-       value (int): Value of the integer literal
+        value (int): Value of the integer literal
     """
 
     def __init__(self, value):
+        self.kind = 'INTLIT'
         self.value = value
 
     def __str__(self):
         """Convert to string (pretty print)"""
-        return 'INTEGER LIT. <%d>\n' % (self.value)
+        return 'INTEGER LIT. <%d>\n' % self.value
 
 
 class FloatLit:
     """Float literal AST node
 
     Args:
-       value (float): Value of the float literal
-
-    Attributes:
-       value (float): Value of the float literal
+        value (float): Value of the float literal
     """
 
     def __init__(self, value):
+        self.kind = 'FLOATLIT'
         self.value = value
 
     def __str__(self):
         """Convert to string (pretty print)"""
-        return 'FLOAT LIT. <%f>\n' % (self.value)
+        return 'FLOAT LIT. <%f>\n' % self.value
 
 
 class Identifier:
     """Identifier AST node
 
     Args:
-       name (str): Name of the identifier
-
-    Attributes:
-       name (str): Name of the identifier
+        name (str): Name of the identifier
     """
 
     def __init__(self, name):
+        self.kind = 'IDENTIFIER'
         self.name = name
 
     def __str__(self):
         """Convert to string (pretty print)"""
-        return 'IDENTIFIER <%s>\n' % (self.name)
+        return 'IDENTIFIER <%s>\n' % self.name
 
 
-class BinOp:
-    """Binary Operator AST node
+class PLUS:
+    """Identifier AST node"""
 
-    Args:
-       kind (str): Name of the operation ('MUL' or 'ADD')
-       left: AST node left to the operator
-       right: AST node right to the operator
-
-    Attributes:
-       name (str): Name of the identifier
-       left: AST node left to the operator
-       right: AST node right to the operator
-    """
-
-    def __init__(self, kind, left, right):
-        self.kind = kind
-        self.left = left
-        self.right = right
+    def __init__(self):
+        self.kind = '+'
 
     def __str__(self):
         """Convert to string (pretty print)"""
-        result = 'BINARY OP. <%s>\n' % (self.kind)
-        result += indent(str(self.left), 2)
-        result += indent(str(self.right), 2)
+        return '%s\n' % self.kind
+
+
+class STAR:
+    """Identifier AST node"""
+
+    def __init__(self):
+        self.kind = '*'
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        return '%s\n' % self.kind
+
+
+class EPSILON:
+    """Identifier AST node"""
+
+    def __init__(self):
+        self.kind = 'EPSILON'
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        return '%s\n' % self.kind
+
+
+class LPARAN:
+    """Identifier AST node"""
+
+    def __init__(self):
+        self.kind = '('
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        return '%s\n' % self.kind
+
+
+class RPARAN:
+    """Identifier AST node"""
+
+    def __init__(self):
+        self.kind = ')'
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        return '%s\n' % self.kind
+
+
+class DOLLAR:
+    """Identifier AST node"""
+
+    def __init__(self):
+        self.kind = '$'
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        return '%s\n' % self.kind
+
+
+class S:
+    """Binary Operator AST node
+    Args:
+       children: child nodes
+    """
+
+    def __init__(self, children):
+        self.kind = 'S'
+        self.children = children
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        result = 'S.\n'
+        for child in self.children:
+            result += indent(str(child), 2)
+        return result
+
+
+class E:
+    """Binary Operator AST node
+    Args:
+       children: child nodes
+    """
+
+    def __init__(self, children):
+        self.kind = 'E'
+        self.children = children
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        result = 'E.\n'
+        for child in self.children:
+            result += indent(str(child), 2)
+        return result
+
+
+class T:
+    """Binary Operator AST node
+    Args:
+       children: child nodes
+    """
+
+    def __init__(self, children):
+        self.kind = 'T'
+        self.children = children
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        result = 'T.\n'
+        for child in self.children:
+            result += indent(str(child), 2)
+        return result
+
+
+class F:
+    """Binary Operator AST node
+    Args:
+        children: child nodes
+    """
+
+    def __init__(self, children):
+        self.kind = 'F'
+        self.children = children
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        result = 'F.\n'
+        for child in self.children:
+            result += indent(str(child), 2)
+        return result
+
+
+class Tp:
+    """Binary Operator AST node
+    Args:
+       children: child nodes
+    """
+
+    def __init__(self, children):
+        self.kind = 'Tp'
+        self.children = children
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        result = 'Tp.\n'
+        for child in self.children:
+            result += indent(str(child), 2)
+        return result
+
+
+class Ep:
+    """Binary Operator AST node
+    Args:
+       children: child nodes
+    """
+
+    def __init__(self, children):
+        self.kind = 'Ep'
+        self.children = children
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        result = 'Ep.\n'
+        for child in self.children:
+            result += indent(str(child), 2)
         return result

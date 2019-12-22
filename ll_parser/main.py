@@ -24,7 +24,6 @@ def main():
     ast = parser.parseS()
 
     # really pretty print ast with latex
-    print(str(ast))
     visual(ast)
 
 
