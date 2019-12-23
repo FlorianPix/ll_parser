@@ -11,11 +11,11 @@ star = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,round
 epsilon = 'child[level distance=2em, sibling distance=2em]{node[fill=green!30,rounded corners,font=\\ttfamily]{$\\varepsilon$}}\n'
 
 S = '\\node{S}\n'
-E = 'child[sibling distance=3em]{\n'
+E = 'child[sibling distance=%sem]{\n'
 T = 'child[sibling distance=%sem]{\n'
 F = 'child[sibling distance=%sem]{\n'
-Ep = 'child[sibling distance=%sem]{\n'
-Tp = 'child[sibling distance=%sem]{\n'
+Ep = 'child{\n'
+Tp = 'child{\n'
 F0 = 'child[level distance=2em, sibling distance=3em]{\n'
 Ep0 = 'child[level distance=2em, sibling distance=3em]{\n'
 Tp0 = 'child[level distance=2em, sibling distance=3em]{\n'
@@ -53,7 +53,7 @@ def S_vis(ast):
 
 
 def E_vis(ast):
-    result = E
+    result = E % get_len(ast.children)
     result += 'node{E}'
     for child in ast.children:
         result += rec(child)
@@ -86,7 +86,7 @@ def F_vis(ast):
 
 def Ep_vis(ast):
     if ast.children[0].kind is not 'EPSILON':
-        result = Ep % get_len(ast.children)
+        result = Ep
     else:
         result = Ep0
     result += 'node{Ep}'
@@ -98,7 +98,7 @@ def Ep_vis(ast):
 
 def Tp_vis(ast):
     if ast.children[0].kind is not 'EPSILON':
-        result = Tp % get_len(ast.children)
+        result = Tp
     else:
         result = Tp0
     result += 'node{Tp}'
