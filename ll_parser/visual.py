@@ -1,14 +1,14 @@
 import subprocess
 
-intlit = 'child[level distance=2em, sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
-floatlit = 'child[level distance=2em, sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
-identifier = 'child[level distance=2em, sibling distance=3em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{ID}}}}\n'
-dollar = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,rounded corners,font=\\ttfamily]{\\$}}\n'
+intlit = 'child[level distance=1.5em, sibling distance=1.5em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
+floatlit = 'child[level distance=1.5em, sibling distance=1.5em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{{}}}}}\n'
+identifier = 'child[level distance=1.5em, sibling distance=1.5em]{{node[fill=green!30,rounded corners,font=\\ttfamily]{{ID}}}}\n'
+dollar = 'child[level distance=2em, sibling distance=em]{node[fill=green!30,rounded corners,font=\\ttfamily]{\\$}}\n'
 rparan = 'child[sibling distance=1.5em]{node[fill=green!30,rounded corners,font=\\ttfamily]{(}}\n'
 lparan = 'child[sibling distance=1.5em]{node[fill=green!30,rounded corners,font=\\ttfamily]{)}}\n'
-plus = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,rounded corners,font=\\ttfamily]{+}}\n'
-star = 'child[level distance=2em, sibling distance=3em]{node[fill=green!30,rounded corners,font=\\ttfamily]{*}}\n'
-epsilon = 'child[level distance=2em, sibling distance=2em]{node[fill=green!30,rounded corners,font=\\ttfamily]{$\\varepsilon$}}\n'
+plus = 'child[level distance=1.5em, sibling distance=1.5em]{node[fill=green!30,rounded corners,font=\\ttfamily]{+}}\n'
+star = 'child[level distance=1.5em, sibling distance=1.5em]{node[fill=green!30,rounded corners,font=\\ttfamily]{*}}\n'
+epsilon = 'child[level distance=1.5em, sibling distance=1.5em]{node[fill=green!30,rounded corners,font=\\ttfamily]{$\\varepsilon$}}\n'
 
 S = '\\node{S}\n'
 E = 'child[sibling distance=%sem]{\n'
@@ -16,9 +16,9 @@ T = 'child[sibling distance=%sem]{\n'
 F = 'child[sibling distance=%sem]{\n'
 Ep = 'child{\n'
 Tp = 'child{\n'
-F0 = 'child[level distance=2em, sibling distance=3em]{\n'
-Ep0 = 'child[level distance=2em, sibling distance=3em]{\n'
-Tp0 = 'child[level distance=2em, sibling distance=3em]{\n'
+F0 = 'child[level distance=1.5em, sibling distance=1.5em]{\n'
+Ep0 = 'child[level distance=1.5em, sibling distance=1.5em]{\n'
+Tp0 = 'child[level distance=1.5em, sibling distance=1.5em]{\n'
 
 header = '\\documentclass[preview]{standalone} \n\n' \
          '\\usepackage{tikz} \n\n' \
@@ -89,7 +89,7 @@ def Ep_vis(ast):
         result = Ep
     else:
         result = Ep0
-    result += 'node{Ep}'
+    result += 'node{E\'}'
     for child in ast.children:
         result += rec(child)
     result += '}\n'
@@ -101,7 +101,7 @@ def Tp_vis(ast):
         result = Tp
     else:
         result = Tp0
-    result += 'node{Tp}'
+    result += 'node{T\'}'
     for child in ast.children:
         result += rec(child)
     result += '}\n'
@@ -164,7 +164,7 @@ switcher = {
 
 
 def get_len(children):
-    ln = len(children) + 1
+    ln = len(children) - 0.5
     for child in children:
         if hasattr(child, 'children'):
             ln += get_len(child.children)
