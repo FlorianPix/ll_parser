@@ -108,3 +108,31 @@ class BinOp:
         result += indent(str(self.left), 2)
         result += indent(str(self.right), 2)
         return result
+
+
+class Let:
+    """Let AST node
+
+    Args:
+       name (str): Name of the identifier
+       init: AST node representing the initializer expression
+       expr: AST node representing the nested expression
+
+    Attributes:
+       name (str): Name of the identifier
+       init: AST node representing the initializer expression
+       expr: AST node representing the nested expression
+    """
+
+    def __init__(self, name, init, expr):
+        self.name = name
+        self.init = init
+        self.expr = expr
+
+    def __str__(self):
+        """Convert to string (pretty print)"""
+        result = 'LET %s BE\n' % (self.name)
+        result += indent(str(self.init), 2)
+        result += 'IN\n'
+        result += indent(str(self.expr), 2)
+        return result

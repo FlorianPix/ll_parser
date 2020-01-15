@@ -9,7 +9,7 @@ import sys
 
 from .lexer import lexer
 from .parser import Parser
-from .visual import visual
+from .sema import Sema
 
 
 def main():
@@ -23,9 +23,14 @@ def main():
     parser = Parser(tokens)
     ast = parser.parseS()
 
-    # really pretty print ast with latex
+    # perform semantic analysis
+    # sema = Sema(ast)
+    # ok = sema.check()
+
+    # pretty print the AST
     print(str(ast))
-    visual(ast)
+
+    # print("Scoping OK:" + str(ok))
 
 
 if __name__ == '__main__':

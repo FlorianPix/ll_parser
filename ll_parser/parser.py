@@ -73,14 +73,15 @@ class Parser:
         if (t.type == 'LPARAN'
                 or t.type == 'INT_LIT'
                 or t.type == 'FLOAT_LIT'
-                or t.type == 'IDENTIFIER'):
-            e = self.parseE()
+                or t.type == 'IDENTIFIER'
+                or t.type == 'LET'):
+            result = self.parseE()
             # we should have processed all tokens by now
             if self.current_token is not None:
                 raise RuntimeError('Error while parsing S (did not reach end '
                                    'of stream, current token: %s' %
                                    self.current_token)
-            return e
+            return result
         else:
             raise RuntimeError('Error while parsing S (current token %s)' % t)
 
@@ -95,11 +96,20 @@ class Parser:
                 or t.type == 'INT_LIT'
                 or t.type == 'FLOAT_LIT'
                 or t.type == 'IDENTIFIER'):
-            t = self.parseT()
-            ep = self.parseEp()
-            if ep is not None:
-                return ast.BinOp('ADD', t, ep)
-            return t
+            left = self.parseT()
+            return self.parseEp(left)
+        elif t.type == 'LET':
+            t = self.consume_token()
+            if t.type == 'IDENTIFIER':
+                name = t.value
+                t = self.consume_token()
+            else:
+                raise RuntimeError('Expected token %s but found %s' % ('IDENTIFIER',
+                                                                       t.type))
+            self.accept_token('EQUALS')
+            init = self.parseE()
+            self.accept_token('IN')
+            return ast.Let(name, init, self.parseE())
         else:
             raise RuntimeError('Error while parsing E (current token %s)' % t)
 
@@ -114,11 +124,8 @@ class Parser:
                 or t.type == 'INT_LIT'
                 or t.type == 'FLOAT_LIT'
                 or t.type == 'IDENTIFIER'):
-            f = self.parseF()
-            tp = self.parseTp()
-            if tp is not None:
-                return ast.BinOp('MUL', f, tp)
-            return f
+            left = self.parseF()
+            return self.parseTp(left)
         else:
             raise RuntimeError('Error while parsing T (current token %s)' % t)
 
@@ -131,9 +138,9 @@ class Parser:
 
         if t.type == 'LPARAN':
             self.consume_token()
-            e = self.parseE()
+            result = self.parseE()
             self.accept_token('RPARAN')
-            return e
+            return result
         elif t.type == 'INT_LIT':
             self.consume_token()
             return ast.IntLit(t.value)
@@ -146,34 +153,35 @@ class Parser:
         else:
             raise RuntimeError('Error while parsing F (current token %s)' % t)
 
-    def parseTp(self):
+    def parseTp(self, left):
         """Parse non-terminal Tp"""
         t = self.current_token
 
-        if t is None or t.type == 'PLUS' or t.type == 'RPARAN':
-            return
+        if (t is None
+                or t.type == 'PLUS'
+                or t.type == 'RPARAN'
+                or t.type == 'IN'):
+            return left
         elif t.type == 'STAR':
             self.consume_token()
-            f = self.parseF()
-            tp = self.parseTp()
-            if tp is not None:
-                return ast.BinOp('MUL', f, tp)
-            return f
+            right = self.parseF()
+            left = ast.BinOp('MUL', left, right)
+            return self.parseTp(left)
         else:
             raise RuntimeError("Error while parsing Tp' (current token %s)" % t)
 
-    def parseEp(self):
+    def parseEp(self, left):
         """Parse non-terminal Ep"""
         t = self.current_token
 
-        if t is None or t.type == 'RPARAN':
-            return
+        if (t is None
+                or t.type == 'RPARAN'
+                or t.type == 'IN'):
+            return left
         elif t.type == 'PLUS':
             self.consume_token()
-            t = self.parseT()
-            ep = self.parseEp()
-            if ep is not None:
-                return ast.BinOp('ADD', t, ep)
-            return t
+            right = self.parseT()
+            left = ast.BinOp('ADD', left, right)
+            return self.parseEp(left)
         else:
             raise RuntimeError("Error while parsing Ep' (current token %s)" % t)
