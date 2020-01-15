@@ -24,13 +24,13 @@ def main():
     ast = parser.parseS()
 
     # perform semantic analysis
-    # sema = Sema(ast)
-    # ok = sema.check()
+    sema = Sema(ast)
+    ok = sema.check()
 
     # pretty print the AST
     print(str(ast))
 
-    # print("Scoping OK:" + str(ok))
+    print("Scoping OK:" + str(ok))
 
 
 if __name__ == '__main__':

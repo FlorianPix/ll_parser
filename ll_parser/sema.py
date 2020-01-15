@@ -12,6 +12,7 @@ class Sema:
 
     def __init__(self, ast):
         self.ast = ast
+        self.sym_tab = []
 
     def check(self):
         return self.check_node(self.ast)
@@ -32,12 +33,21 @@ class Sema:
 
     def check_binop(self, node):
         assert isinstance(node, ast.BinOp)
-        raise NotImplementedError('check_binop is not yet implemented!')
+        ok_1 = self.check_node(node.left)
+        ok_2 = self.check_node(node.right)
+        return ok_1 and ok_2
 
     def check_let(self, node):
         assert isinstance(node, ast.Let)
-        raise NotImplementedError('check_let is not yet implemented!')
+        ok_1 = self.check_node(node.init)
+        self.sym_tab.append(node.name)
+        ok_2 = self.check_node(node.expr)
+        self.sym_tab.pop()
+        return ok_1 and ok_2
 
     def check_identifier(self, node):
         assert isinstance(node, ast.Identifier)
-        raise NotImplementedError('check_identifier is not yet implemented!')
+        for sym in self.sym_tab:
+            if sym == node.name:
+                return True
+        return False
