@@ -25,12 +25,21 @@ def main():
 
     # perform semantic analysis
     sema = Sema(ast)
-    ok = sema.check()
+    ok, type = sema.check()
 
     # pretty print the AST
     print(str(ast))
 
-    print("Scoping OK:" + str(ok))
+    print("Scoping OK: " + str(ok) + "\nType: " + str_type(type))
+
+
+def str_type(type):
+    if type == 2:
+        return "FLOAT"
+    elif type == 1:
+        return "INT"
+    else:
+        return "ERR"
 
 
 if __name__ == '__main__':
