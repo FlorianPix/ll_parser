@@ -33,9 +33,7 @@ class Sema:
 
     def check_binop(self, node):
         assert isinstance(node, ast.BinOp)
-        ok_1 = self.check_node(node.left)
-        ok_2 = self.check_node(node.right)
-        return ok_1 and ok_2
+        return self.check_node(node.left) and self.check_node(node.right)
 
     def check_let(self, node):
         assert isinstance(node, ast.Let)
@@ -50,4 +48,5 @@ class Sema:
         for sym in self.sym_tab:
             if sym == node.name:
                 return True
+        print("ERROR: variable '%s' not in scope" % node.name)
         return False

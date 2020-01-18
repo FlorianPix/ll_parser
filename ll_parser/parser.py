@@ -100,12 +100,8 @@ class Parser:
             return self.parseEp(left)
         elif t.type == 'LET':
             t = self.consume_token()
-            if t.type == 'IDENTIFIER':
-                name = t.value
-                t = self.consume_token()
-            else:
-                raise RuntimeError('Expected token %s but found %s' % ('IDENTIFIER',
-                                                                       t.type))
+            name = t.value
+            self.accept_token('IDENTIFIER')
             self.accept_token('EQUALS')
             init = self.parseE()
             self.accept_token('IN')
