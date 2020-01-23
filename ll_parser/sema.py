@@ -9,13 +9,18 @@ from . import ast
 
 
 class Sema:
+    ERROR = 0
+    INTEGER = 1
+    FLOAT = 2
 
     def __init__(self, ast):
         self.ast = ast
-        self.sym_tab = []
+        self.symtab = []
+        self.error = False
 
     def check(self):
-        return self.check_node(self.ast)
+        self.check_node(self.ast)
+        return self.error
 
     def check_node(self, node):
         if isinstance(node, ast.Let):
@@ -25,29 +30,41 @@ class Sema:
         elif isinstance(node, ast.BinOp):
             return self.check_binop(node)
         elif isinstance(node, ast.IntLit):
-            return True
+            return Sema.INTEGER
         elif isinstance(node, ast.FloatLit):
-            return True
+            return Sema.FLOAT
         else:
             raise RuntimeError('unexpected AST node')
 
     def check_binop(self, node):
         assert isinstance(node, ast.BinOp)
-        ok_1 = self.check_node(node.left)
-        ok_2 = self.check_node(node.right)
-        return ok_1 and ok_2
+        return max(self.check_node(node.left), self.check_node(node.right))
 
     def check_let(self, node):
         assert isinstance(node, ast.Let)
-        ok_1 = self.check_node(node.init)
-        self.sym_tab.append(node.name)
-        ok_2 = self.check_node(node.expr)
-        self.sym_tab.pop()
-        return ok_1 and ok_2
+        type = self.check_node(node.init)
+        self.symtab_push(node.name, type)
+        type = self.check_node(node.expr)
+        self.symtab_pop()
+        return type
 
     def check_identifier(self, node):
         assert isinstance(node, ast.Identifier)
-        for sym in self.sym_tab:
-            if sym == node.name:
-                return True
-        return False
+        type = self.symbol_lookup(node.name)
+        if type is Sema.ERROR:
+            self.error = True
+            print("ERROR: variable '%s' not in scope" % node.name)
+            return Sema.ERROR
+        return type
+
+    def symtab_push(self, name, type):
+        self.symtab.append((name, type))
+
+    def symtab_pop(self):
+        self.symtab.pop()
+
+    def symbol_lookup(self, name):
+        for n, t in reversed(self.symtab):
+            if n == name:
+                return t
+        return Sema.ERROR

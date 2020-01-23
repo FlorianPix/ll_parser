@@ -92,24 +92,22 @@ class Parser:
         if t is None:
             raise RuntimeError('Error while parsing E (end of stream)')
 
-        if (t.type == 'LPARAN'
-                or t.type == 'INT_LIT'
-                or t.type == 'FLOAT_LIT'
-                or t.type == 'IDENTIFIER'):
-            left = self.parseT()
-            return self.parseEp(left)
-        elif t.type == 'LET':
+        if t.type == 'LET':
             t = self.consume_token()
-            if t.type == 'IDENTIFIER':
-                name = t.value
-                t = self.consume_token()
-            else:
-                raise RuntimeError('Expected token %s but found %s' % ('IDENTIFIER',
-                                                                       t.type))
+            name = t.value
+            self.accept_token('IDENTIFIER')
             self.accept_token('EQUALS')
             init = self.parseE()
             self.accept_token('IN')
-            return ast.Let(name, init, self.parseE())
+            expr = self.parseE()
+
+            return ast.Let(name, init, expr)
+        elif (t.type == 'LPARAN'
+              or t.type == 'INT_LIT'
+              or t.type == 'FLOAT_LIT'
+              or t.type == 'IDENTIFIER'):
+            left = self.parseT()
+            return self.parseEp(left)
         else:
             raise RuntimeError('Error while parsing E (current token %s)' % t)
 
@@ -157,10 +155,7 @@ class Parser:
         """Parse non-terminal Tp"""
         t = self.current_token
 
-        if (t is None
-                or t.type == 'PLUS'
-                or t.type == 'RPARAN'
-                or t.type == 'IN'):
+        if t is None or t.type == 'PLUS' or t.type == 'RPARAN' or t.type == 'IN':
             return left
         elif t.type == 'STAR':
             self.consume_token()
@@ -174,9 +169,7 @@ class Parser:
         """Parse non-terminal Ep"""
         t = self.current_token
 
-        if (t is None
-                or t.type == 'RPARAN'
-                or t.type == 'IN'):
+        if t is None or t.type == 'RPARAN' or t.type == 'IN':
             return left
         elif t.type == 'PLUS':
             self.consume_token()

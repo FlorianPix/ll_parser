@@ -25,12 +25,11 @@ def main():
 
     # perform semantic analysis
     sema = Sema(ast)
-    ok = sema.check()
+    error = sema.check()
 
     # pretty print the AST
     print(str(ast))
-
-    print("Scoping OK:" + str(ok))
+    print("Error ? : " + str(error))
 
 
 if __name__ == '__main__':
